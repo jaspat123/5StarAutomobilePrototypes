@@ -7,46 +7,55 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.Sql;
 using System.Data.SqlClient;
 
 namespace CustomerInformation
 {
     public partial class Form1 : Form
     {
+
+        SqlCommand cmd;
+        SqlConnection con;
+        SqlDataAdapter da;
+        
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void btnConfirm_Click(object sender, EventArgs e)
         {
+            con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\temp\Jasmine\CustomerInformation\Data.mdf;Integrated Security=True");
+            con.Open();
+            cmd = new SqlCommand("INSERT INTO Customerdb (CustomerName,EmailAddress,AddressStreet,City,Province,PostalCode,PhoneNumber) VALUES (@CustomerName,@EmailAddress,@AddressStreet,@City,@Province,@PostalCode,@PhoneNumber)",con);
+            cmd.Parameters.Add("@CustomerName", txtCusName.Text);
+            cmd.Parameters.Add("@EmailAddress", txtEmail.Text);
+            cmd.Parameters.Add("@AddressStreet", txtAddSt.Text);
+            cmd.Parameters.Add("@City", txtCity.Text);
+            cmd.Parameters.Add("@Province", txtProv.Text);
+            cmd.Parameters.Add("@PostalCode", txtPostCode.Text);
+            cmd.Parameters.AddWithValue("@PhoneNumber", txtPhone.Text);
+            cmd.ExecuteNonQuery();
 
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\upatel\Documents\Data.mdf;Integrated Security=True;Connect Timeout=30");
-            SqlDataAdapter sda = new SqlDataAdapter("Select Count(*) From Login where Username='" + textBox1.Text + "' and Password ='"+ textBox2.Text + "'",con);
-            DataTable dt = new DataTable();
-            sda.Fill(dt);
-            if (dt.Rows[0][0].ToString() == "1")
+            if (true)
             {
-
-                this.Hide();
-
-                Main ss = new Main();
-                ss.Show();
-
+                MessageBox.Show("Your data has been inputed.");
             }
             else
             {
-                MessageBox.Show("Invalid login, please try again");
+                MessageBox.Show("Please check your information and try again.");
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
